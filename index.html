@@ -457,17 +457,17 @@
 
     <!-- RIGHT SIDEBAR (INSPECTOR & OUTPUT) -->
     <aside class="sidebar-right" id="sidebarRight">
-      <!-- Model Badge Card (Like the GPT-4o 3D Orb Card in screenshot) -->
+      <!-- Model Badge Card (Like the 3D Orb Card in screenshot) -->
       <div class="model-badge-card">
         <div class="model-header-row">
           <div class="model-name">
-            <span>GPT-4o + DALL·E 3</span>
+            <span>Gemini 2.5 + Imagen 3</span>
             <span class="sparkle-cyan">✦</span>
           </div>
-          <span class="model-sub">HD Studio Engine</span>
+          <span class="model-sub">Google AI Studio</span>
         </div>
         <p class="model-desc">
-          Multimodal vision analysis synthesized into ultra-realistic photographic fashion portraits.
+          Multimodal vision analysis synthesized into ultra-realistic photographic fashion portraits via Imagen 3.
         </p>
 
         <!-- 3D Iridescent Orb Artwork (CSS Glow) -->
@@ -588,31 +588,6 @@
           </button>
         </div>
       </div>
-
-      <!-- Studio Activity Stats (Like the Activity Card in screenshot) -->
-      <div class="activity-stats-card">
-        <span class="card-mini-title">YOUR STUDIO ACTIVITY</span>
-        <div class="stats-row">
-          <span class="stat-label">Portraits rendered</span>
-          <span class="stat-value" id="statRenderCount">12</span>
-        </div>
-        <div class="stats-row">
-          <span class="stat-label">Render Quality</span>
-          <span class="stat-value">HD 1024px</span>
-        </div>
-        <div class="stats-row">
-          <span class="stat-label">Production Time Saved</span>
-          <span class="stat-value">4.5 hrs</span>
-        </div>
-
-        <!-- Wave Sparkline Visual -->
-        <div class="wave-sparkline-wrap">
-          <svg viewBox="0 0 200 40" class="sparkline-svg">
-            <path d="M 0 32 Q 25 15 50 25 T 100 18 T 150 28 T 200 10 L 200 40 L 0 40 Z" class="sparkline-area"/>
-            <path d="M 0 32 Q 25 15 50 25 T 100 18 T 150 28 T 200 10" class="sparkline-line"/>
-          </svg>
-        </div>
-      </div>
     </aside>
   </div>
 
@@ -632,13 +607,13 @@
 
       <div class="modal-body">
         <div class="form-group">
-          <label for="inputApiKey">OpenAI API Key (Opsional / Disimpan Lokal)</label>
+          <label for="inputApiKey">Google Gemini API Key (AI Studio)</label>
           <div class="input-secret-wrap">
-            <input type="password" id="inputApiKey" placeholder="sk-proj-..." autocomplete="off">
+            <input type="password" id="inputApiKey" placeholder="AIzaSy-your-gemini-api-key" autocomplete="off">
             <button type="button" class="btn-toggle-eye" id="btnToggleKeyVisibility">👁</button>
           </div>
           <p class="field-hint">
-            Kunci ini disimpan aman di LocalStorage browser Anda atau di file <code>.env</code> backend. Jika belum ada kunci, aplikasi otomatis menggunakan mode <strong>Studio Ultra-Simulation</strong> dengan katalog foto komersial HD.
+            Kunci ini didapatkan gratis dari Google AI Studio (aistudio.google.com/apikey). Disimpan aman di browser Anda atau file <code>.env</code> backend. Jika belum ada kunci, aplikasi otomatis menggunakan mode <strong>Studio Ultra-Simulation</strong> dengan katalog foto komersial HD.
           </p>
         </div>
 
@@ -649,7 +624,7 @@
               <input type="radio" name="engineMode" value="auto" checked id="radioEngineAuto">
               <div class="radio-card-content">
                 <strong>Auto Detect (Rekomendasi)</strong>
-                <span>Pakai OpenAI API jika key tersedia, atau beralih mulus ke Studio Simulation jika key belum diisi.</span>
+                <span>Pakai Gemini API jika key tersedia, atau beralih mulus ke Studio Simulation jika key belum diisi.</span>
               </div>
             </label>
             <label class="radio-card">
@@ -665,7 +640,7 @@
         <div class="modal-alert-box">
           <div class="alert-icon">💡</div>
           <div class="alert-text">
-            Sistem bekerja dengan pipeline 2-tahap: <strong>GPT-4o Vision</strong> menganalisis pose &amp; pakaian, lalu <strong>DALL·E 3</strong> mengeksekusi fotorealisme studio beresolusi tinggi.
+            Sistem bekerja dengan pipeline AI Studio: <strong>Gemini 2.5 Flash</strong> menganalisis pose &amp; pakaian, lalu <strong>Imagen 3</strong> mengeksekusi fotorealisme studio beresolusi tinggi.
           </div>
         </div>
       </div>
