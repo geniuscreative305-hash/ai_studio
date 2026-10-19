@@ -1,6 +1,6 @@
 /**
  * AuraStudio: Backend Server (Node.js + Express)
- * Provides static hosting and secure server-side OpenAI API Proxy
+ * Provides static hosting and secure server-side Google Gemini API (Imagen 3) Proxy
  */
 
 const express = require('express');
@@ -10,7 +10,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -23,8 +23,8 @@ app.use(express.static(path.join(__dirname)));
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
-    engine: 'OpenAI GPT-4o Vision + DALL-E 3',
-    hasKey: Boolean(OPENAI_API_KEY),
+    engine: 'Google Gemini 2.5 + Imagen 3',
+    hasKey: Boolean(GEMINI_API_KEY),
   });
 });
 
@@ -32,85 +32,56 @@ app.get('/api/health', (req, res) => {
 app.post('/api/generate', async (req, res) => {
   try {
     const { poseDataUrl, personDataUrl, outfitDataUrl, lighting, ratio, bgMode, bgColor, userApiKey } = req.body;
-    const key = userApiKey || OPENAI_API_KEY;
+    const key = userApiKey || GEMINI_API_KEY;
 
     if (!key) {
       return res.status(400).json({
-        error: 'API Key OpenAI belum dikonfigurasi di file .env server atau di form settings.',
+        error: 'API Key Gemini belum dikonfigurasi di file .env server atau di form settings.',
       });
     }
 
-    // Stage 1: GPT-4o Vision analysis
-    const gptPrompt = `You are a high-fashion photography director. Analyze the 3 provided reference images:
-1. POSE: Match exact posture, body angle, hand positions, and camera framing.
-2. PERSON: Preserve exact facial bone structure, eyes, lips, jawline, skin tone, and hair.
-3. OUTFIT: Recreate this exact garment, fabric texture, cut, and colors.
-Target Lighting: ${lighting || 'commercial softbox'} studio lighting.
-Background: ${bgMode === 'solid' ? `Solid studio color ${bgColor || '#0A0A0A'}` : 'Clean transparent studio background'}.
-Synthesize an ultra-detailed, single-paragraph photographic DALL-E 3 prompt for a photorealistic 8k editorial studio portrait. Output ONLY the raw prompt string.`;
+    const bgDesc = bgMode === 'solid' ? `solid studio background ${bgColor || '#0A0A0A'}` : 'isolated transparent background with clean alpha';
+    const synthesizedPrompt = `Ultra-realistic commercial high-fashion studio photography, full portrait, professional ${lighting || 'softbox'} lighting, delicate catchlights in eyes, pore-level natural skin texture, ${bgDesc}, 8k resolution photograph, editorial magazine quality.`;
 
-    const gptResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+    const imagenEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${encodeURIComponent(key)}`;
+
+    const response = await fetch(imagenEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
+        instances: [
           {
-            role: 'user',
-            content: [
-              { type: 'text', text: gptPrompt },
-              { type: 'image_url', image_url: { url: poseDataUrl } },
-              { type: 'image_url', image_url: { url: personDataUrl } },
-              { type: 'image_url', image_url: { url: outfitDataUrl } },
-            ],
+            prompt: synthesizedPrompt,
           },
         ],
-        max_tokens: 300,
+        parameters: {
+          sampleCount: 1,
+          aspectRatio: ratio || '1:1',
+          outputMimeType: 'image/jpeg',
+          personGeneration: 'ALLOW_ADULT',
+        },
       }),
     });
 
-    if (!gptResponse.ok) {
-      const gptErr = await gptResponse.json();
-      return res.status(gptResponse.status).json({ error: gptErr.error?.message || 'GPT-4o Vision failed' });
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => ({}));
+      return res.status(response.status).json({
+        error: errJson.error?.message || `Gemini API Status: ${response.status}`,
+      });
     }
 
-    const gptJson = await gptResponse.json();
-    const synthesizedPrompt = gptJson.choices[0]?.message?.content || 'Editorial studio fashion portrait';
+    const data = await response.json();
+    const base64Bytes = data.predictions?.[0]?.bytesBase64Encoded;
 
-    // Stage 2: DALL-E 3 rendering
-    let dalleSize = '1024x1024';
-    if (ratio === '9:16') dalleSize = '1024x1792';
-
-    const dalleResponse = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify({
-        model: 'dall-e-3',
-        prompt: `${synthesizedPrompt}, 8k photography, commercial studio portrait, award winning lighting, high fidelity skin texture, no artifacts, no extra limbs`,
-        n: 1,
-        size: dalleSize,
-        quality: 'hd',
-        style: 'natural',
-      }),
-    });
-
-    if (!dalleResponse.ok) {
-      const dalleErr = await dalleResponse.json();
-      return res.status(dalleResponse.status).json({ error: dalleErr.error?.message || 'DALL-E 3 failed' });
+    if (!base64Bytes) {
+      return res.status(500).json({ error: 'Tidak ada data gambar yang dikembalikan oleh Imagen 3' });
     }
-
-    const dalleJson = await dalleResponse.json();
-    const imageUrl = dalleJson.data[0]?.url;
 
     res.json({
       success: true,
-      imageUrl,
+      imageUrl: `data:image/jpeg;base64,${base64Bytes}`,
       prompt: synthesizedPrompt,
     });
   } catch (error) {
