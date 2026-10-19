@@ -1,0 +1,16 @@
+{
+  "name": "aurastudio-outfit-pose-swap",
+  "version": "1.0.0",
+  "description": "Outfit & Pose Swap Studio — Ultra-Realistic AI Fashion Studio via OpenAI GPT-4o & DALL-E 3",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "author": "Zettbos",
+  "license": "MIT"
+}

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outfit &amp; Pose Swap Studio — AI Fashion Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="studio-body">
+  <!-- Ambient background glow layers -->
+  <div class="ambient-glow glow-top"></div>
+  <div class="ambient-glow glow-bottom-left"></div>
+  <div class="ambient-glow glow-bottom-right"></div>
+
+  <div class="app-shell">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar-left" id="sidebarLeft">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">AuraStudio</span>
+          <span class="brand-badge">AI 4.0</span>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="sidebar-nav">
+        <a href="#studio" class="nav-item active" id="navStudio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Studio</span>
+        </a>
+        <a href="#swap" class="nav-item" id="navSwap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span>Outfit &amp; Pose Swap</span>
+        </a>
+        <a href="#presets" class="nav-item" id="navPresets">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          <span>Lighting Presets</span>
+        </a>
+        <a href="#results" class="nav-item" id="navResults">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Gallery / Results</span>
+        </a>
+        <a href="#settings" class="nav-item" id="navSettingsBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Studio Settings</span>
+        </a>
+      </nav>
+
+      <!-- Recent Sessions -->
+      <div class="sidebar-section">
+        <div class="section-label-row">
+          <span class="section-label">RECENT SESSIONS</span>
+          <span class="sparkle-dot">✦</span>
+        </div>
+        <div class="recent-list" id="recentList">
+          <div class="recent-item" data-session-id="sample-1">
+            <span class="recent-title">Vogue Studio Blazer</span>
+            <span class="recent-time">Today</span>
+          </div>
+          <div class="recent-item" data-session-id="sample-2">
+            <span class="recent-title">Rembrandt Leather Jacket</span>
+            <span class="recent-time">Today</span>
+          </div>
+          <div class="recent-item" data-session-id="sample-3">
+            <span class="recent-title">Summer Linen Lookbook</span>
+            <span class="recent-time">Yesterday</span>
+          </div>
+          <div class="recent-item" data-session-id="sample-4">
+            <span class="recent-title">Silk Evening Gown Pose</span>
+            <span class="recent-time">2 days ago</span>
+          </div>
+        </div>
+        <button class="btn-ghost-full" id="btnViewAllSessions">
+          <span>View all sessions</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- User Profile / Key Status at Bottom -->
+      <div class="sidebar-footer">
+        <div class="footer-avatar">
+          <div class="avatar-circle">AS</div>
+          <div class="status-indicator online" id="apiStatusDot"></div>
+        </div>
+        <div class="footer-info">
+          <span class="user-name">Studio Director</span>
+          <span class="user-tier" id="apiStatusText">Simulation Ready</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MOBILE HEADER TOGGLE -->
+    <header class="mobile-header">
+      <button class="mobile-toggle-btn" id="mobileMenuBtn" aria-label="Toggle Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <div class="mobile-brand">AuraStudio</div>
+      <button class="mobile-toggle-btn" id="mobileInspectorBtn" aria-label="Toggle Results">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="15" y1="3" x2="15" y2="21"></line>
+        </svg>
+      </button>
+    </header>
+
+    <!-- CENTER MAIN WORKSPACE -->
+    <main class="main-workspace">
+      <!-- Top Search & Quick Action Bar -->
+      <div class="top-bar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" placeholder="Search studio sessions..." id="searchInput">
+          <kbd class="kbd-badge">⌘K</kbd>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn-glass-pill" id="btnNewSession">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>New Session</span>
+          </button>
+          <button class="btn-icon-glass" id="btnNotifications" title="Studio Alerts">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </button>
+          <button class="btn-icon-glass" id="btnSettingsQuick" title="API Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Studio Content Body -->
+      <div class="workspace-scroll-area">
+        <!-- Hero Section -->
+        <section class="hero-section">
+          <div class="hero-badge-pill">
+            <span class="badge-spark">✦</span>
+            <span>OUTFIT &amp; POSE SWAP STUDIO</span>
+          </div>
+          <h1 class="hero-title">What outfit &amp; pose shall we craft today?</h1>
+          <p class="hero-subtitle">
+            Synthesize 3 input photos into a single photorealistic high-end studio portrait using OpenAI GPT-4o Vision and DALL·E 3.
+          </p>
+        </section>
+
+        <!-- Studio Console (Card Glass) -->
+        <div class="studio-console-glass">
+          <!-- 3 Upload Slots Grid -->
+          <div class="upload-slots-grid">
+            <!-- SLOT 1: POSE -->
+            <div class="upload-slot-card" id="slotPoseCard">
+              <div class="slot-header">
+                <span class="slot-tag">INPUT 01</span>
+                <span class="slot-title">INPUT POSE</span>
+              </div>
+              <p class="slot-desc">Foto referensi pose, gesture tangan, dan sudut kamera.</p>
+              
+              <div class="dropzone" id="dropzonePose" tabindex="0">
+                <input type="file" id="filePose" accept="image/jpeg,image/png,image/webp" class="file-input-hidden">
+                <div class="dropzone-empty" id="emptyPose">
+                  <div class="dropzone-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <circle cx="12" cy="5" r="3"/>
+                      <path d="M12 8v8"/>
+                      <path d="M9 11l3-3 3 3"/>
+                      <path d="M9 16l3 5 3-5"/>
+                    </svg>
+                  </div>
+                  <span class="dropzone-label">Pilih / Drag Foto Pose</span>
+                  <span class="dropzone-sub">JPG, PNG, WebP (Maks 10MB)</span>
+                </div>
+                <div class="dropzone-preview hidden" id="previewPose">
+                  <img src="" alt="Pose Preview" id="imgPose" class="preview-img">
+                  <div class="preview-overlay">
+                    <span class="preview-filename" id="namePose">pose.jpg</span>
+                    <button type="button" class="btn-remove-thumb" id="removePose" title="Hapus Gambar">✕</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SLOT 2: ORANG -->
+            <div class="upload-slot-card" id="slotPersonCard">
+              <div class="slot-header">
+                <span class="slot-tag">INPUT 02</span>
+                <span class="slot-title">INPUT ORANG</span>
+              </div>
+              <p class="slot-desc">Foto wajah &amp; identitas orang yang dipertahankan.</p>
+              
+              <div class="dropzone" id="dropzonePerson" tabindex="0">
+                <input type="file" id="filePerson" accept="image/jpeg,image/png,image/webp" class="file-input-hidden">
+                <div class="dropzone-empty" id="emptyPerson">
+                  <div class="dropzone-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </div>
+                  <span class="dropzone-label">Pilih / Drag Foto Orang</span>
+                  <span class="dropzone-sub">Wajah, rambut &amp; warna kulit</span>
+                </div>
+                <div class="dropzone-preview hidden" id="previewPerson">
+                  <img src="" alt="Person Preview" id="imgPerson" class="preview-img">
+                  <div class="preview-overlay">
+                    <span class="preview-filename" id="namePerson">person.jpg</span>
+                    <button type="button" class="btn-remove-thumb" id="removePerson" title="Hapus Gambar">✕</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SLOT 3: BAJU -->
+            <div class="upload-slot-card" id="slotOutfitCard">
+              <div class="slot-header">
+                <span class="slot-tag">INPUT 03</span>
+                <span class="slot-title">INPUT BAJU</span>
+              </div>
+              <p class="slot-desc">Foto pakaian/outfit yang ingin dikenakan.</p>
+              
+              <div class="dropzone" id="dropzoneOutfit" tabindex="0">
+                <input type="file" id="fileOutfit" accept="image/jpeg,image/png,image/webp" class="file-input-hidden">
+                <div class="dropzone-empty" id="emptyOutfit">
+                  <div class="dropzone-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                      <line x1="3" y1="6" x2="21" y2="6"/>
+                      <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                  </div>
+                  <span class="dropzone-label">Pilih / Drag Foto Pakaian</span>
+                  <span class="dropzone-sub">Tekstur, motif &amp; potongan baju</span>
+                </div>
+                <div class="dropzone-preview hidden" id="previewOutfit">
+                  <img src="" alt="Outfit Preview" id="imgOutfit" class="preview-img">
+                  <div class="preview-overlay">
+                    <span class="preview-filename" id="nameOutfit">outfit.jpg</span>
+                    <button type="button" class="btn-remove-thumb" id="removeOutfit" title="Hapus Gambar">✕</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Studio Parameter Controls -->
+          <div class="studio-controls-panel">
+            <!-- Lighting Presets Pills (Horizontal) -->
+            <div class="control-row">
+              <span class="control-label">STUDIO LIGHTING:</span>
+              <div class="pills-group" id="lightingGroup">
+                <button type="button" class="pill-btn active" data-lighting="softbox">
+                  <span class="pill-icon">✨</span> Softbox Commercial
+                </button>
+                <button type="button" class="pill-btn" data-lighting="vogue">
+                  <span class="pill-icon">👗</span> Vogue Editorial
+                </button>
+                <button type="button" class="pill-btn" data-lighting="rembrandt">
+                  <span class="pill-icon">🎭</span> Rembrandt Cinematic
+                </button>
+                <button type="button" class="pill-btn" data-lighting="cyber">
+                  <span class="pill-icon">🔮</span> Cyber Violet
+                </button>
+              </div>
+            </div>
+
+            <!-- Aspect Ratio and Background Row -->
+            <div class="control-cols-grid">
+              <!-- Aspect Ratio -->
+              <div class="control-col">
+                <span class="control-label">ASPECT RATIO:</span>
+                <div class="pills-group" id="ratioGroup">
+                  <button type="button" class="pill-btn active" data-ratio="1:1">
+                    <span class="ratio-box ratio-1-1"></span> 1:1 Square
+                  </button>
+                  <button type="button" class="pill-btn" data-ratio="3:4">
+                    <span class="ratio-box ratio-3-4"></span> 3:4 Portrait
+                  </button>
+                  <button type="button" class="pill-btn" data-ratio="9:16">
+                    <span class="ratio-box ratio-9-16"></span> 9:16 Story
+                  </button>
+                </div>
+              </div>
+
+              <!-- Background Options -->
+              <div class="control-col">
+                <span class="control-label">BACKGROUND:</span>
+                <div class="bg-selector-row">
+                  <div class="pills-group" id="bgModeGroup">
+                    <button type="button" class="pill-btn active" data-bg-mode="transparent">
+                      <span class="pill-icon">🏁</span> Transparent PNG
+                    </button>
+                    <button type="button" class="pill-btn" data-bg-mode="solid">
+                      <span class="pill-icon">🎨</span> Solid Color
+                    </button>
+                  </div>
+                  
+                  <!-- Color Picker (Appears when Solid Color active) -->
+                  <div class="color-picker-box hidden" id="colorPickerBox">
+                    <input type="color" id="bgColorInput" value="#0A0A0A" title="Pilih Warna Latar">
+                    <div class="color-swatches" id="colorSwatches">
+                      <button type="button" class="swatch active" style="background:#0A0A0A" data-color="#0A0A0A" title="Obsidian Black"></button>
+                      <button type="button" class="swatch" style="background:#FFFFFF" data-color="#FFFFFF" title="Studio White"></button>
+                      <button type="button" class="swatch" style="background:#1E1B4B" data-color="#1E1B4B" title="Midnight Navy"></button>
+                      <button type="button" class="swatch" style="background:#2E1065" data-color="#2E1065" title="Deep Violet"></button>
+                      <button type="button" class="swatch" style="background:#78716C" data-color="#78716C" title="Neutral Warm Gray"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Trigger Bar -->
+            <div class="action-trigger-bar">
+              <div class="inputs-status" id="inputsStatus">
+                <span class="status-dot-pulse"></span>
+                <span id="statusMessage">Silakan upload minimal 3 gambar atau gunakan sample demo</span>
+              </div>
+
+              <div class="action-buttons-wrap">
+                <button type="button" class="btn-demo-quick" id="btnLoadDemoSamples" title="Muat 3 Foto Demo Instan">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                  <span>Load Demo Samples</span>
+                </button>
+
+                <button type="button" class="btn-generate-glow" id="btnGenerate">
+                  <span class="btn-shimmer"></span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spark-icon">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  <span id="btnGenerateText">Generate Studio Portrait</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Loading Progress Track (Hidden initially) -->
+            <div class="generation-progress-box hidden" id="generationProgress">
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+              </div>
+              <div class="progress-step-row">
+                <span class="progress-spinner"></span>
+                <span class="progress-step-text" id="progressStepText">Memulai pipeline AI...</span>
+                <span class="progress-percentage" id="progressPercentage">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Studio Capabilities Cards (Like the 4 cards in ChatGPT redesign) -->
+        <section class="capabilities-showcase">
+          <div class="cap-card">
+            <div class="cap-card-content">
+              <h3>Precise Pose Transfer</h3>
+              <p>Camera angle, hand gestures, and body line geometry are copied from reference.</p>
+            </div>
+            <div class="cap-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 2L15 9H9L12 2Z"/>
+                <circle cx="12" cy="15" r="4"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-card-content">
+              <h3>Face &amp; Hair Retention</h3>
+              <p>Strict facial anatomy, skin tone, jawline, and natural eye catchlights preserved.</p>
+            </div>
+            <div class="cap-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                <line x1="9" y1="9" x2="9.01" y2="9"/>
+                <line x1="15" y1="9" x2="15.01" y2="9"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-card-content">
+              <h3>Garment Drape Fidelity</h3>
+              <p>Fabric texture, stitching, collar structure, and folds rendered in 8k sharpness.</p>
+            </div>
+            <div class="cap-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="cap-card">
+            <div class="cap-card-content">
+              <h3>Studio Commercial Lighting</h3>
+              <p>Balanced softbox key light, rim lighting, and clean alpha/solid background.</p>
+            </div>
+            <div class="cap-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+              </svg>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR (INSPECTOR & OUTPUT) -->
+    <aside class="sidebar-right" id="sidebarRight">
+      <!-- Model Badge Card (Like the GPT-4o 3D Orb Card in screenshot) -->
+      <div class="model-badge-card">
+        <div class="model-header-row">
+          <div class="model-name">
+            <span>GPT-4o + DALL·E 3</span>
+            <span class="sparkle-cyan">✦</span>
+          </div>
+          <span class="model-sub">HD Studio Engine</span>
+        </div>
+        <p class="model-desc">
+          Multimodal vision analysis synthesized into ultra-realistic photographic fashion portraits.
+        </p>
+
+        <!-- 3D Iridescent Orb Artwork (CSS Glow) -->
+        <div class="orb-artwork-wrap">
+          <div class="iridescent-orb"></div>
+          <div class="glass-orb-plate plate-1"></div>
+          <div class="glass-orb-plate plate-2"></div>
+        </div>
+      </div>
+
+      <!-- Studio Capabilities Checklist -->
+      <div class="capabilities-checklist-card">
+        <div class="card-title-row">
+          <span class="card-mini-title">CAPABILITIES</span>
+        </div>
+        <ul class="checklist-items">
+          <li class="check-item">
+            <div class="check-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
+            <span class="check-label">Pose &amp; Angle Mapping</span>
+            <span class="check-status">✓</span>
+          </li>
+          <li class="check-item">
+            <div class="check-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <span class="check-label">Facial Identity Lock</span>
+            <span class="check-status">✓</span>
+          </li>
+          <li class="check-item">
+            <div class="check-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              </svg>
+            </div>
+            <span class="check-label">Fabric Drape Transfer</span>
+            <span class="check-status">✓</span>
+          </li>
+          <li class="check-item">
+            <div class="check-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+            </div>
+            <span class="check-label">HD Studio Lighting</span>
+            <span class="check-status">✓</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- ACTIVE RESULT CARD (Dominant in Right Sidebar) -->
+      <div class="result-display-card" id="resultDisplayCard">
+        <div class="result-header">
+          <div class="result-title-row">
+            <span class="result-tag">ACTIVE RESULT</span>
+            <span class="badge-ratio" id="activeResultRatio">1:1</span>
+          </div>
+          <span class="result-preset-name" id="activeResultPreset">Softbox Commercial</span>
+        </div>
+
+        <!-- Frame Image Container -->
+        <div class="result-frame ratio-1-1" id="resultFrame">
+          <!-- Empty Placeholder State -->
+          <div class="result-empty-state" id="resultEmpty">
+            <div class="result-empty-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+            <span class="empty-title">Studio Portrait Preview</span>
+            <p class="empty-desc">Upload 3 foto referensi dan klik "Generate" untuk merender hasil.</p>
+          </div>
+
+          <!-- Active Generated Image -->
+          <img src="" alt="Studio Portrait Result" id="resultImg" class="result-img hidden">
+
+          <!-- Fullscreen Zoom Trigger -->
+          <button type="button" class="btn-zoom-overlay hidden" id="btnZoomResult" title="Lihat Layar Penuh">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <polyline points="9 21 3 21 3 15"></polyline>
+              <line x1="21" y1="3" x2="14" y2="10"></line>
+              <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Result Action Buttons -->
+        <div class="result-actions-row">
+          <button type="button" class="btn-action-primary" id="btnDownload" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Download PNG</span>
+          </button>
+          
+          <button type="button" class="btn-action-secondary" id="btnRegenerate" disabled title="Generate ulang dengan variasi lighting">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <polyline points="23 20 23 14 17 14"></polyline>
+              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+            </svg>
+            <span>Regenerate</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Studio Activity Stats (Like the Activity Card in screenshot) -->
+      <div class="activity-stats-card">
+        <span class="card-mini-title">YOUR STUDIO ACTIVITY</span>
+        <div class="stats-row">
+          <span class="stat-label">Portraits rendered</span>
+          <span class="stat-value" id="statRenderCount">12</span>
+        </div>
+        <div class="stats-row">
+          <span class="stat-label">Render Quality</span>
+          <span class="stat-value">HD 1024px</span>
+        </div>
+        <div class="stats-row">
+          <span class="stat-label">Production Time Saved</span>
+          <span class="stat-value">4.5 hrs</span>
+        </div>
+
+        <!-- Wave Sparkline Visual -->
+        <div class="wave-sparkline-wrap">
+          <svg viewBox="0 0 200 40" class="sparkline-svg">
+            <path d="M 0 32 Q 25 15 50 25 T 100 18 T 150 28 T 200 10 L 200 40 L 0 40 Z" class="sparkline-area"/>
+            <path d="M 0 32 Q 25 15 50 25 T 100 18 T 150 28 T 200 10" class="sparkline-line"/>
+          </svg>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- SETTINGS MODAL (Frosted Glass) -->
+  <div class="modal-backdrop hidden" id="settingsModal">
+    <div class="modal-card-glass">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <h3>Studio Configuration &amp; API Key</h3>
+        </div>
+        <button type="button" class="btn-modal-close" id="btnCloseSettings">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="inputApiKey">OpenAI API Key (Opsional / Disimpan Lokal)</label>
+          <div class="input-secret-wrap">
+            <input type="password" id="inputApiKey" placeholder="sk-proj-..." autocomplete="off">
+            <button type="button" class="btn-toggle-eye" id="btnToggleKeyVisibility">👁</button>
+          </div>
+          <p class="field-hint">
+            Kunci ini disimpan aman di LocalStorage browser Anda atau di file <code>.env</code> backend. Jika belum ada kunci, aplikasi otomatis menggunakan mode <strong>Studio Ultra-Simulation</strong> dengan katalog foto komersial HD.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label>Mode Eksekusi:</label>
+          <div class="radio-card-group">
+            <label class="radio-card">
+              <input type="radio" name="engineMode" value="auto" checked id="radioEngineAuto">
+              <div class="radio-card-content">
+                <strong>Auto Detect (Rekomendasi)</strong>
+                <span>Pakai OpenAI API jika key tersedia, atau beralih mulus ke Studio Simulation jika key belum diisi.</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="engineMode" value="simulation" id="radioEngineSim">
+              <div class="radio-card-content">
+                <strong>Studio Simulation HD</strong>
+                <span>Mode pratinjau cepat tanpa kuota API, cocok untuk presentasi dan pengujian alur UI.</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-alert-box">
+          <div class="alert-icon">💡</div>
+          <div class="alert-text">
+            Sistem bekerja dengan pipeline 2-tahap: <strong>GPT-4o Vision</strong> menganalisis pose &amp; pakaian, lalu <strong>DALL·E 3</strong> mengeksekusi fotorealisme studio beresolusi tinggi.
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost" id="btnCancelSettings">Batal</button>
+        <button type="button" class="btn-primary-purple" id="btnSaveSettings">Simpan Pengaturan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX / ZOOM MODAL -->
+  <div class="modal-backdrop hidden" id="lightboxModal">
+    <div class="lightbox-content">
+      <button type="button" class="btn-lightbox-close" id="btnCloseLightbox">✕</button>
+      <img src="" alt="Full Resolution Portrait" id="lightboxImg" class="lightbox-img">
+      <div class="lightbox-bar">
+        <span class="lightbox-info" id="lightboxInfo">Outfit &amp; Pose Swap Portrait</span>
+        <button type="button" class="btn-lightbox-download" id="btnLightboxDownload">Download High-Res</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification element -->
+  <div class="toast-notification hidden" id="toastNotification">
+    <span class="toast-icon" id="toastIcon">✓</span>
+    <span class="toast-msg" id="toastMsg">Pengaturan disimpan</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
