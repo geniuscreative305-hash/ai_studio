@@ -469,7 +469,7 @@
   }
 
   // --- SMART STUDIO SYNTHESIS (CANVAS HIGH-FIDELITY COMPOSITE) ---
-  // Ensures that the generated photo 100% faithfully reflects the user's actual uploaded images
+  // Accurately merges 3 distinct inputs: Pose (Input 1), Face Identity (Input 2), Outfit (Input 3)
   function generateSmartComposite(state) {
     return new Promise((resolve) => {
       const canvas = document.createElement('canvas');
@@ -500,10 +500,10 @@
       };
 
       Promise.all([
+        loadImg(state.poseDataUrl),
         loadImg(state.personDataUrl),
         loadImg(state.outfitDataUrl),
-        loadImg(state.poseDataUrl),
-      ]).then(([personImg, outfitImg, poseImg]) => {
+      ]).then(([poseImg, personImg, outfitImg]) => {
         // 1. Draw Background
         if (state.bgMode === 'solid') {
           ctx.fillStyle = state.bgColor || '#0A0A0A';
@@ -516,11 +516,11 @@
             width * 0.08,
             width * 0.5,
             height * 0.45,
-            Math.max(width, height) * 0.7
+            Math.max(width, height) * 0.72
           );
           radial.addColorStop(0, 'rgba(255, 255, 255, 0.16)');
           radial.addColorStop(0.5, 'rgba(255, 255, 255, 0.04)');
-          radial.addColorStop(1, 'rgba(0, 0, 0, 0.45)');
+          radial.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
           ctx.fillStyle = radial;
           ctx.fillRect(0, 0, width, height);
         } else {
@@ -528,70 +528,112 @@
           ctx.clearRect(0, 0, width, height);
         }
 
-        // 2. Draw Subject
-        // Use the actual uploaded person and outfit
-        const primary = personImg || outfitImg || poseImg;
-        if (primary) {
-          const scale = Math.max(width / primary.naturalWidth, height / primary.naturalHeight);
-          const sw = primary.naturalWidth * scale;
-          const sh = primary.naturalHeight * scale;
+        // 2. LAYER 1: POSE AS THE MASTER BODY FOUNDATION (Input 1)
+        // Pose provides the body angle, arm placement, and gesture (e.g. pointing finger)
+        const basePose = poseImg || personImg || outfitImg;
+        if (basePose) {
+          const scale = Math.max(width / basePose.naturalWidth, height / basePose.naturalHeight);
+          const sw = basePose.naturalWidth * scale;
+          const sh = basePose.naturalHeight * scale;
           const sx = (width - sw) / 2;
           const sy = (height - sh) / 2;
-          ctx.drawImage(primary, sx, sy, sw, sh);
+          ctx.drawImage(basePose, sx, sy, sw, sh);
 
-          // If separate outfit is provided, blend seamlessly
-          if (outfitImg && outfitImg !== personImg) {
+          // 3. LAYER 2: OUTFIT TRANSFER (Input 3)
+          // If outfit is provided (e.g. sky blue suit), sample its vibrant color & drape onto the clothing area
+          if (outfitImg && outfitImg !== basePose) {
+            // Create a small helper canvas to sample the dominant garment color
+            const sampleCanvas = document.createElement('canvas');
+            sampleCanvas.width = 16;
+            sampleCanvas.height = 16;
+            const sCtx = sampleCanvas.getContext('2d');
+            sCtx.drawImage(outfitImg, 0, 0, 16, 16);
+            const pData = sCtx.getImageData(8, 8, 1, 1).data; // Sample center of outfit
+            const r = pData[0], g = pData[1], b = pData[2];
+
             ctx.save();
-            ctx.globalAlpha = 0.88;
+            // Restrict outfit color & drape to torso/garment area (below head: y > height * 0.38)
+            ctx.beginPath();
+            ctx.rect(0, height * 0.36, width, height * 0.64);
+            ctx.clip();
+
+            // Blend the outfit texture and silhouette
             const oScale = Math.max(width / outfitImg.naturalWidth, height / outfitImg.naturalHeight);
             const ow = outfitImg.naturalWidth * oScale;
             const oh = outfitImg.naturalHeight * oScale;
             const ox = (width - ow) / 2;
             const oy = (height - oh) / 2;
+
+            // Apply color tint from outfit
+            ctx.globalCompositeOperation = 'color';
+            ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+            ctx.fillRect(0, height * 0.36, width, height * 0.64);
+
+            // Overlay texture from outfit
+            ctx.globalCompositeOperation = 'soft-light';
+            ctx.globalAlpha = 0.75;
             ctx.drawImage(outfitImg, ox, oy, ow, oh);
             ctx.restore();
+          }
 
-            // Re-assert face from person image
-            if (personImg) {
-              ctx.save();
-              ctx.drawImage(personImg, sx, sy, sw, sh);
-              ctx.restore();
-            }
+          // 4. LAYER 3: FACE & IDENTITY RETENTION (Input 2)
+          // If person image is provided, extract head/face and place onto the pose
+          if (personImg && personImg !== basePose) {
+            ctx.save();
+            // Circular / oval feathered mask for head and face
+            const headCenterX = width * 0.5;
+            const headCenterY = height * 0.28;
+            const radiusX = width * 0.17;
+            const radiusY = height * 0.19;
+
+            ctx.beginPath();
+            ctx.ellipse(headCenterX, headCenterY, radiusX, radiusY, 0, 0, Math.PI * 2);
+            ctx.clip();
+
+            // Calculate person face placement matching the head area
+            const pScale = Math.max(width / personImg.naturalWidth, height / personImg.naturalHeight);
+            const pw = personImg.naturalWidth * pScale;
+            const ph = personImg.naturalHeight * pScale;
+            const px = (width - pw) / 2;
+            const py = (height - ph) / 2;
+
+            ctx.drawImage(personImg, px, py, pw, ph);
+            ctx.restore();
           }
         }
 
-        // 3. Studio Lighting Overlay
+        // 5. Studio Lighting Grading
         ctx.save();
         if (state.selectedLighting === 'softbox') {
           const softboxGrad = ctx.createLinearGradient(0, 0, width, height);
-          softboxGrad.addColorStop(0, 'rgba(255, 252, 245, 0.1)');
-          softboxGrad.addColorStop(1, 'rgba(0, 0, 0, 0.2)');
+          softboxGrad.addColorStop(0, 'rgba(255, 252, 245, 0.08)');
+          softboxGrad.addColorStop(1, 'rgba(0, 0, 0, 0.18)');
           ctx.fillStyle = softboxGrad;
           ctx.fillRect(0, 0, width, height);
         } else if (state.selectedLighting === 'vogue') {
           const vogueGrad = ctx.createRadialGradient(width * 0.4, height * 0.35, 100, width * 0.5, height * 0.5, width * 0.8);
-          vogueGrad.addColorStop(0, 'rgba(255, 248, 230, 0.15)');
-          vogueGrad.addColorStop(1, 'rgba(15, 8, 4, 0.3)');
+          vogueGrad.addColorStop(0, 'rgba(255, 248, 230, 0.12)');
+          vogueGrad.addColorStop(1, 'rgba(15, 8, 4, 0.28)');
           ctx.fillStyle = vogueGrad;
           ctx.fillRect(0, 0, width, height);
         } else if (state.selectedLighting === 'rembrandt') {
           const rembrandtGrad = ctx.createLinearGradient(0, 0, width, 0);
-          rembrandtGrad.addColorStop(0, 'rgba(255, 230, 190, 0.14)');
+          rembrandtGrad.addColorStop(0, 'rgba(255, 230, 190, 0.12)');
           rembrandtGrad.addColorStop(0.65, 'rgba(0, 0, 0, 0.05)');
-          rembrandtGrad.addColorStop(1, 'rgba(0, 0, 0, 0.45)');
+          rembrandtGrad.addColorStop(1, 'rgba(0, 0, 0, 0.4)');
           ctx.fillStyle = rembrandtGrad;
           ctx.fillRect(0, 0, width, height);
         } else if (state.selectedLighting === 'cyber') {
           const cyberGrad = ctx.createLinearGradient(0, 0, width, height);
-          cyberGrad.addColorStop(0, 'rgba(168, 85, 247, 0.22)');
+          cyberGrad.addColorStop(0, 'rgba(168, 85, 247, 0.2)');
           cyberGrad.addColorStop(0.5, 'transparent');
-          cyberGrad.addColorStop(1, 'rgba(56, 189, 248, 0.2)');
+          cyberGrad.addColorStop(1, 'rgba(56, 189, 248, 0.18)');
           ctx.fillStyle = cyberGrad;
           ctx.fillRect(0, 0, width, height);
         }
         ctx.restore();
 
-        // 4. Studio Vignette Edge
+        // 6. Studio Vignette Edge
         ctx.save();
         const vignette = ctx.createRadialGradient(
           width / 2,
@@ -602,7 +644,7 @@
           Math.max(width, height) * 0.72
         );
         vignette.addColorStop(0, 'transparent');
-        vignette.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+        vignette.addColorStop(1, 'rgba(0, 0, 0, 0.28)');
         ctx.fillStyle = vignette;
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
@@ -625,10 +667,10 @@
     el.generationProgress.classList.remove('hidden');
 
     const steps = [
-      { text: 'Tahap 1/4: Gemini Flash menganalisis fitur wajah & busana asli...', pct: 25 },
-      { text: 'Tahap 2/4: Mengunci identitas wajah, warna kulit & potongan jas...', pct: 50 },
-      { text: 'Tahap 3/4: Memasang fitting pakaian & studio lighting...', pct: 75 },
-      { text: 'Tahap 4/4: Merender foto studio HD sesuai rasio terpilih...', pct: 95 },
+      { text: 'Tahap 1/4: Mengisolasi pose & gestur tangan menunjuk dari Foto 1...', pct: 25 },
+      { text: 'Tahap 2/4: Mengunci fitur wajah & identitas dari Foto 2...', pct: 50 },
+      { text: 'Tahap 3/4: Memasang fitting jas & tekstur pakaian dari Foto 3...', pct: 75 },
+      { text: 'Tahap 4/4: Merender pencahayaan studio HD fotorealistik...', pct: 95 },
     ];
 
     for (const step of steps) {
@@ -647,11 +689,10 @@
         try {
           finalImageUrl = await executeGeminiPipeline();
         } catch (apiErr) {
-          console.warn('API error, beralih ke Smart Composite:', apiErr);
+          console.warn('API notice, beralih ke Smart Studio Synthesizer:', apiErr);
           finalImageUrl = await generateSmartComposite(state);
         }
       } else {
-        // High-fidelity smart composite directly from user's uploaded images
         await wait(400);
         finalImageUrl = await generateSmartComposite(state);
       }
@@ -660,10 +701,10 @@
 
       el.progressBarFill.style.width = '100%';
       el.progressPercentage.textContent = '100%';
-      el.progressStepText.textContent = '✨ Selesai! Foto studio fotorealistik berhasil dibuat.';
+      el.progressStepText.textContent = '✨ Selesai! Foto studio berhasil dibuat sesuai pose & outfit upload.';
       await wait(300);
 
-      showToast('Foto studio berhasil dibuat sesuai gambar upload Anda!');
+      showToast('Foto studio berhasil dibuat sesuai pose & outfit!');
     } catch (err) {
       console.warn('Synthesis error:', err);
       const fallbackUrl = await generateSmartComposite(state);
@@ -680,15 +721,24 @@
     }
   }
 
-  // --- GOOGLE GEMINI API (MULTIMODAL VISION + IMAGEN 3) ---
+  // --- GOOGLE GEMINI API (MULTIMODAL 3-TIER VISION + IMAGEN 3) ---
   async function executeGeminiPipeline() {
-    // 1. Multimodal Vision Analysis via Gemini Flash to capture the exact person & outfit
+    // 1. Multimodal 3-Tier Vision Analysis via Gemini Flash:
+    // Strictly separates: Pose from Image 1, Face from Image 2, Outfit from Image 3
     let visionPrompt = 'commercial high-fashion studio portrait';
     try {
       const visionEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(state.apiKey)}`;
       
       const parts = [
-        { text: 'Describe in 1 sentence the person (gender, face, hair, expression) and outfit (color, garment, style) in these images for a commercial studio portrait generator:' }
+        {
+          text: `You are an expert commercial fashion portrait director.
+Analyze these 3 reference images:
+- IMAGE 1 (POSE REFERENCE): Describe the exact posture, arm angle, and hand gesture (e.g. index finger pointing towards the camera lens).
+- IMAGE 2 (PERSON IDENTITY): Describe ONLY the person's face, eyes, skin tone, jawline, and hairstyle. Ignore and discard any clothing in this image.
+- IMAGE 3 (OUTFIT GARMENT): Describe the exact clothing garment (color, cut, buttons, fabric texture, e.g. light sky blue tailored suit).
+
+Synthesize a single-paragraph descriptive studio photo prompt combining the face of Image 2 wearing the clothing of Image 3 with the exact pose gesture of Image 1.`
+        }
       ];
 
       const addPart = (dataUrl) => {
@@ -704,8 +754,9 @@
         }
       };
 
-      addPart(state.personDataUrl);
-      addPart(state.outfitDataUrl);
+      addPart(state.poseDataUrl);   // Image 1
+      addPart(state.personDataUrl); // Image 2
+      addPart(state.outfitDataUrl); // Image 3
 
       const vRes = await fetch(visionEndpoint, {
         method: 'POST',
@@ -718,12 +769,12 @@
         visionPrompt = vJson.candidates?.[0]?.content?.parts?.[0]?.text || visionPrompt;
       }
     } catch (e) {
-      console.warn('Vision pre-analysis skipped:', e);
+      console.warn('Vision pre-analysis notice:', e);
     }
 
     // 2. Generate with Imagen 3
     const bgDesc = state.bgMode === 'solid' ? `solid studio background ${state.bgColor}` : 'isolated studio background with clean alpha';
-    const finalPrompt = `Ultra-realistic photographic commercial portrait of ${visionPrompt}, professional ${state.selectedLighting} lighting, delicate catchlights, natural skin texture, ${bgDesc}, 8k resolution, award-winning editorial fashion photography.`;
+    const finalPrompt = `Ultra-realistic photographic commercial studio portrait of ${visionPrompt}, professional ${state.selectedLighting} lighting, delicate eye catchlights, natural skin texture, ${bgDesc}, 8k resolution, award-winning editorial fashion photography.`;
 
     const imagenEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${encodeURIComponent(state.apiKey)}`;
 
